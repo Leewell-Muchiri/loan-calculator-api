@@ -58,7 +58,7 @@ class LoansController < ApplicationController
 
         loan_amount = loan.loan_amount
         monthy_rate = loan.bank.flat_rate_payment / 12 / 100
-        period_in_months loan.loan_period * 12
+        period_in_months = loan.loan_period * 12
 
         payment = (loan_amount + (loan_amount * monthy_rate * period_in_months)) / period_in_months 
 
@@ -81,8 +81,20 @@ class LoansController < ApplicationController
         loan.amortization_schedule = amortization_schedule
         loan.save
 
-        payment
+        payment_amount
 
     end
+
+    def calculate_reducing_balance_rate_payment(loan)
+        loan_amount = loan.loan_amount
+        period_in_months = loan.loan_period * 12
+        monthy_rate = loan.bank.reducing_balance_rate / 12 /100
+        
+        discount_factor = (1 - (1 + monthy_rate)**(-period_in_months))
+
+        payment_amount = (loan_amount * monthy_rate) / discount_factor
+        payment_amount
+    end
+
   end
   
